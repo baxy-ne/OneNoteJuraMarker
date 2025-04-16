@@ -10,6 +10,6 @@
     Title="OneNoteJuraMarker">
 
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
+        <Button x:Name="myButton" >Click Me</Button>
     </StackPanel>
 </Window>

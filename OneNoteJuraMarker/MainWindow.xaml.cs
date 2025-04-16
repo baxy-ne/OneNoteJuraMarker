@@ -10,6 +10,8 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using OneNoteJuraMarker.Utils;
+using OneNoteJuraMarker.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -23,14 +25,12 @@ namespace OneNoteJuraMarker
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainViewModel ViewModel { get; set; }
+        public MainWindow(IWindowSizeUtility windowSizeUtility, MainViewModel viewModel)
         {
             this.InitializeComponent();
-        }
-
-        private void myButton_Click(object sender, RoutedEventArgs e)
-        {
-            myButton.Content = "Clicked";
+            this.ViewModel = viewModel;
+            windowSizeUtility.SetWindowSize(550, 700, this);
         }
     }
 }

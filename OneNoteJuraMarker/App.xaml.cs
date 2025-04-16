@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,7 +42,11 @@ namespace OneNoteJuraMarker
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            m_window = new MainWindow();
+            if (_serviceProvider == null)
+            {
+                _serviceProvider = ConfigureServices();
+            }
+            m_window = App.Services.GetRequiredService<MainWindow>();
             m_window.Activate();
         }
 
