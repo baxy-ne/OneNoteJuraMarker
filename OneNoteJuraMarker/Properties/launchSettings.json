@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "OneNoteJuraMarker (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "OneNoteJuraMarker (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
