@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -12,10 +14,15 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty] private bool _viewCheckboxIsChecked;
 
     [ObservableProperty] private bool _tableCheckboxIsChecked;
+    
+    private readonly IConfiguration _config;
 
+    public string DefaultNotebook { get; private set; }
 
-    public MainViewModel()
+    public MainViewModel(IConfiguration configuration)
     {
+        _config = configuration;
+        DefaultNotebook = _config["OneNoteJuraMarker:DefaultNotebook"];
         // _userProfiles = new ObservableCollection<Models.UserProfile>(userLoader.LoadProfiles());
     }
 
