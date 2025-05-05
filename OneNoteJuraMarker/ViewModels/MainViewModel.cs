@@ -9,33 +9,32 @@ namespace OneNoteJuraMarker.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
-    [ObservableProperty] private bool _isSelectAllChecked;
+    [ObservableProperty]
+    private bool _isSelectAllChecked;
 
-    [ObservableProperty] private bool _viewCheckboxIsChecked;
+    [ObservableProperty]
+    private bool _viewCheckboxIsChecked;
 
-    [ObservableProperty] private bool _tableCheckboxIsChecked;
-    
+    [ObservableProperty]
+    private bool _tableCheckboxIsChecked;
+
     private readonly IConfiguration _config;
 
-    public string DefaultNotebook { get; private set; }
+    public string DefaultNotebook { get; set; }
 
     public MainViewModel(IConfiguration configuration)
     {
         _config = configuration;
         DefaultNotebook = _config["OneNoteJuraMarker:DefaultNotebook"];
-        // _userProfiles = new ObservableCollection<Models.UserProfile>(userLoader.LoadProfiles());
     }
 
     [RelayCommand]
     private void StartCompare()
     {
-       
     }
 
     [RelayCommand]
     private void SelectAll()
     {
-        
     }
-    
 }

@@ -25,7 +25,7 @@ namespace OneNoteJuraMarker
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -33,7 +33,7 @@ namespace OneNoteJuraMarker
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         /// <summary>
@@ -42,14 +42,8 @@ namespace OneNoteJuraMarker
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            if (_serviceProvider == null)
-            {
-                _serviceProvider = ConfigureServices();
-            }
-            m_window = App.Services.GetRequiredService<MainWindow>();
-            m_window.Activate();
+            _serviceProvider = ConfigureServices();
+            _serviceProvider.GetRequiredService<MainWindow>().Activate();
         }
-
-        private Window? m_window;
     }
 }
