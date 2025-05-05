@@ -22,6 +22,7 @@ public partial class MainViewModel(IConfiguration configuration, IOneNoteProgram
     [RelayCommand]
     private void LoadNoteBooks()
     {
+        
         foreach (var notebook in _notebooks)
         {
             foreach (var sec in notebook.Sections)

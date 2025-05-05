@@ -12,50 +12,26 @@ namespace OneNoteJuraMarker.OneNoteLogic;
 
 public class OneNoteProgram : IOneNoteProgram
 {
+    private readonly XNamespace _ns = "http://schemas.microsoft.com/office/onenote/2013/onenote";
+    private readonly List<string> _prefixes = new() { "§§", "§", "$", "Art." };
+    private readonly List<string> _abbreviations = new() { "Abs.", "S.", "HS", "Nr.", "Var.", "Alt.", "  ", "lit.", "Gr.", "1.", "2.", "3." };
+    private readonly List<string> _legalCodes = new() { "BGB", "GG", "VwVfG", "VwGO" };
+    private readonly List<string> _romanNumerals = new() { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X" };
+
     [STAThread]
     public void ProcessOneNotePages()
     {
-        var onenoteApp = new Microsoft.Office.Interop.OneNote.Application();
+        var onenoteApp = new Application();
         try
         {
-            XNamespace ns = "http://schemas.microsoft.com/office/onenote/2013/onenote";
-            onenoteApp.GetHierarchy("", HierarchyScope.hsPages, out string notebookXml);
-            XDocument notebookDoc = XDocument.Parse(notebookXml);
+            var notebookDoc = GetNotebookHierarchy(onenoteApp);
 
-            foreach (var page in notebookDoc.Descendants(ns + "Page"))
+            foreach (var page in notebookDoc.Descendants(_ns + "Page"))
             {
-                string pageId = page.Attribute("ID")?.Value;
-                if (string.IsNullOrEmpty(pageId))
-                    continue;
+                var pageId = page.Attribute("ID")?.Value;
+                if (string.IsNullOrEmpty(pageId)) continue;
 
-                onenoteApp.GetPageContent(pageId, out string pageContent);
-                XDocument pageDoc = XDocument.Parse(pageContent);
-                bool modified = false;
-
-                foreach (var textElement in pageDoc.Descendants(ns + "T"))
-                {
-                    // Skip elements that already have our legal formatting
-                    if (textElement.Value.Contains("<span style=\"color:#00B0F0\">"))
-                    {
-                        continue;
-                    }
-
-                    // Remove existing non-legal HTML tags
-                    string plainText = RemoveHtmlTags(textElement.Value);
-                    // Apply legal formatting
-                    string modifiedText = ApplyLegalFormatting(plainText);
-
-                    if (modifiedText != textElement.Value)
-                    {
-                        textElement.ReplaceNodes(new XCData(modifiedText));
-                        modified = true;
-                    }
-                }
-
-                if (modified)
-                {
-                    SaveUpdatedPage(onenoteApp, pageDoc);
-                }
+                ProcessPage(onenoteApp, pageId);
             }
         }
         catch (Exception ex)
@@ -68,107 +44,86 @@ public class OneNoteProgram : IOneNoteProgram
         }
     }
 
-    string RemoveHtmlTags(string input)
+    public XDocument GetNotebookHierarchy(Application app)
     {
-        // This regex removes all tags (<...>)
-        return Regex.Replace(input, "<.*?>", string.Empty);
+        app.GetHierarchy("", HierarchyScope.hsPages, out string xml);
+        return XDocument.Parse(xml);
     }
 
-    string ApplyLegalFormatting(string text)
+    public void ProcessPage(Application app, string pageId)
     {
-        // Define the fixed prefixes.
-        var prefixes = new List<string> { "§§", "§", "$", "Art." };
+        app.GetPageContent(pageId, out string content);
+        var pageDoc = XDocument.Parse(content);
+        bool modified = false;
 
-        // Define sets of legal elements for simple checks.
-        var abbreviations = new List<string> { "Abs.", "S.", "HS", "Nr.", "Var.", "Alt.", "  ", "lit.", "Gr.", "1.", "2.", "3." };
-        var legalCodes = new List<string> { "BGB", "GG", "VwVfG", "VwGO" };
-        var romanNumerals = new List<string> { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X" };
+        foreach (var textElement in pageDoc.Descendants(_ns + "T"))
+        {
+            string original = textElement.Value;
+            if (original.Contains("<span style=\"color:#00B0F0\">")) continue;
 
-        // Split the text into tokens by whitespace.
-        string[] tokens = text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        var resultTokens = new List<string>();
+            string plainText = StripHtml(original);
+            string formatted = FormatLegalReferences(plainText);
 
+            if (formatted != original)
+            {
+                textElement.ReplaceNodes(new XCData(formatted));
+                modified = true;
+            }
+        }
+
+        if (modified)
+            UpdatePage(app, pageDoc);
+    }
+
+    public string StripHtml(string input) =>
+        Regex.Replace(input, "<.*?>", string.Empty);
+
+    public string FormatLegalReferences(string text)
+    {
+        var tokens = text.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        var result = new List<string>();
         int i = 0;
+
         while (i < tokens.Length)
         {
             string token = tokens[i];
-
-            // If the token is a fixed prefix, start building a legal reference block.
-            if (prefixes.Contains(token))
+            if (_prefixes.Contains(token))
             {
-                // Begin the block with the prefix.
-                string legalBlock = token;
-                i++; // Move past the prefix.
-
-                // Gather all subsequent tokens that qualify as legal elements.
-                while (i < tokens.Length && IsLegalElement(tokens[i], abbreviations, romanNumerals, legalCodes))
-                {
-                    legalBlock += " " + tokens[i];
-                    i++;
-                }
-                // Format the entire block:
-                // The prefix is made bold and the whole block is wrapped in a blue-colored span.
-                // We assume the prefix is the first token in the block.>
-                string formattedBlock = $"<span style=\"color:#00B0F0\"><b>{token}</b> {legalBlock.Substring(token.Length).Trim()}</span>";
-                resultTokens.Add(formattedBlock);
+                string block = token;
+                i++;
+                while (i < tokens.Length && IsLegalElement(tokens[i]))
+                    block += " " + tokens[i++];
+                result.Add($"<span style=\"color:#00B0F0\"><b>{token}</b> {block[token.Length..].Trim()}</span>");
             }
             else
             {
-                // If the token is not part of a legal reference, add it as-is.
-                resultTokens.Add(token);
+                result.Add(token);
                 i++;
             }
         }
 
-        // Rebuild the string from the tokens.
-        return string.Join(" ", resultTokens);
+        return string.Join(" ", result);
     }
 
-    /// <summary>
-    /// Checks if a token qualifies as a legal element.
-    /// </summary>
-    private bool IsLegalElement(string token, List<string> abbreviations, List<string> romanNumerals, List<string> legalCodes)
+    public bool IsLegalElement(string token)
     {
-        // Check if the token is numeric.
-        if (int.TryParse(token, out _))
-            return true;
-
-        // Check if the token is one of the defined Roman numerals.
-        if (romanNumerals.Contains(token.ToUpper()))
-            return true;
-
-        // Check if the token is a letter followed by a closing parenthesis, e.g., "a)"
-        if (token.Length == 2 && char.IsLetter(token[0]) && token[1] == ')')
-            return true;
-
-        // Check if the token is one of the known abbreviations.
-        if (abbreviations.Contains(token))
-            return true;
-
-        // Check if the token is one of the legal codes.
-        if (legalCodes.Contains(token))
-            return true;
-
-        // Check if the token is one of the special characters.
-        if (token == "-" || token == "." || token == ",")
-            return true;
-
-        // Otherwise, not considered a legal element.
-        return false;
+        return int.TryParse(token, out _) ||
+               _romanNumerals.Contains(token.ToUpper()) ||
+               (_abbreviations.Contains(token) || _legalCodes.Contains(token)) ||
+               (token.Length == 2 && char.IsLetter(token[0]) && token[1] == ')') ||
+               token is "-" or "." or ",";
     }
 
-
-    private void SaveUpdatedPage(Microsoft.Office.Interop.OneNote.Application onenoteApp, XDocument pageDoc)
+    public void UpdatePage(Application app, XDocument doc)
     {
-        // Remove XML declaration before updating
-        pageDoc.Declaration = null;
-        using (StringWriter sw = new StringWriter())
-        {
-            pageDoc.Save(sw, SaveOptions.DisableFormatting);
-            string validatedXml = sw.ToString();
-            // Optionally write to debug file
-            File.WriteAllText("debug.xml", validatedXml);
-            onenoteApp.UpdatePageContent(validatedXml);
-        }
+        doc.Declaration = null;
+        using var sw = new StringWriter();
+        doc.Save(sw, SaveOptions.DisableFormatting);
+        string updatedXml = sw.ToString();
+
+        // Optional debug file
+        File.WriteAllText("debug.xml", updatedXml);
+
+        app.UpdatePageContent(updatedXml);
     }
 }
