@@ -2,8 +2,8 @@
 
 public class PageModel
 {
-    public string Name { get; set; }
-    public string DateTime { get; set; }
+    public required string Name { get; set; }
+    public required string DateTime { get; set; }
 
-    public string PageXML { get; set; }
+    public required string PageXML { get; set; }
 }

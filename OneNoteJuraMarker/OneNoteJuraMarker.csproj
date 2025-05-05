@@ -43,8 +43,14 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.0-preview.3.25171.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.0-preview.3.25171.5" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.3.25171.5" />
+    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\PreviewWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\MainPage.xaml">

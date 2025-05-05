@@ -17,9 +17,10 @@
                 <Button Command="{Binding  LoadNoteBooksCommand}">ShowPreview</Button>
             </StackPanel>
             <TreeView x:Name="NotebookTreeView"
+                      PointerPressed="NotebookTreeView_PointerPressed"
                   Width="400"
                   Margin="50"/>
         </Grid>
-        
+
     </Grid>
 </Page>

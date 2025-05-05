@@ -1,10 +1,9 @@
 ﻿using OneNoteJuraMarker.Models;
 using System.Collections.Generic;
 
-namespace OneNoteJuraMarker.Interfaces
+namespace OneNoteJuraMarker.Interfaces;
+
+public interface IOneNoteParser
 {
-    public interface IOneNoteParser
-    {
-        List<NotebookModel> LoadNotebooksFromXml();
-    }
+    List<NotebookModel> LoadNotebooksFromXml();
 }

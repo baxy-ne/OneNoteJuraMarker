@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
 using OneNoteJuraMarker.Interfaces;
 using OneNoteJuraMarker.Models;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -13,7 +11,6 @@ namespace OneNoteJuraMarker.ViewModels;
 public partial class MainViewModel(IConfiguration configuration, IOneNoteProgram oneNoteProgram, IOneNoteParser oneNoteParser) : ObservableObject
 {
     [ObservableProperty] private ObservableCollection<NotebookModel> _notebooks = new(oneNoteParser.LoadNotebooksFromXml());
-    [ObservableProperty] private NotebookModel _selectedNotebook;
 
     [ObservableProperty] private bool _viewCheckboxIsChecked;
 
@@ -22,8 +19,7 @@ public partial class MainViewModel(IConfiguration configuration, IOneNoteProgram
     [RelayCommand]
     private void LoadNoteBooks()
     {
-        
-        foreach (var notebook in _notebooks)
+        foreach (var notebook in Notebooks)
         {
             foreach (var sec in notebook.Sections)
             {

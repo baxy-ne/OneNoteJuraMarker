@@ -1,7 +1,6 @@
 ﻿using Microsoft.Office.Interop.OneNote;
 using OneNoteJuraMarker.Interfaces;
 using OneNoteJuraMarker.Models;
-using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 

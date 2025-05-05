@@ -7,28 +7,28 @@ using OneNoteJuraMarker.ViewModels;
 using OneNoteJuraMarker.Views;
 using OneNoteJuraMarker.Interfaces;
 
-namespace OneNoteJuraMarker
-{
-    partial class App
-    {
-        private IServiceProvider _serviceProvider;
-        private static IServiceProvider ConfigureServices()
-        {
-            var provider = new ServiceCollection()
-                .AddSingleton<IConfiguration>(new ConfigurationBuilder()
-                    .SetBasePath(AppContext.BaseDirectory)
-                    .AddJsonFile("config.json", optional: true, reloadOnChange: true)
-                    .Build())
-                .AddSingleton<IWindowSizeUtility, WindowSizeUtility>()
-                .AddSingleton<MainWindow>()
-                .AddSingleton<MainPage>()
-                .AddSingleton<MainViewModel>()
-                .AddSingleton<IOneNoteProgram, OneNoteProgram>()
-                .AddSingleton<IDialogUtility, DialogUtility>()
-                .AddSingleton<IOneNoteParser, OneNoteParser>()
-                .BuildServiceProvider(true);
+namespace OneNoteJuraMarker;
 
-            return provider;
-        }
+partial class App
+{
+    private IServiceProvider _serviceProvider;
+    private static IServiceProvider ConfigureServices()
+    {
+        var provider = new ServiceCollection()
+            .AddSingleton<IConfiguration>(new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("config.json", optional: true, reloadOnChange: true)
+                .Build())
+            .AddSingleton<IWindowSizeUtility, WindowSizeUtility>()
+            .AddSingleton<MainWindow>()
+            .AddSingleton<MainPage>()
+            .AddSingleton<MainViewModel>()
+            .AddSingleton<IOneNoteProgram, OneNoteProgram>()
+            .AddSingleton<IDialogUtility, DialogUtility>()
+            .AddSingleton<IOneNoteParser, OneNoteParser>()
+            .AddSingleton<IYourOneNoteHelper, YourOneNoteHelper>()
+            .BuildServiceProvider(true);
+
+        return provider;
     }
 }
