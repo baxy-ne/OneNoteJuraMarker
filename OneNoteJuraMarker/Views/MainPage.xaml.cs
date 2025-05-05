@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using OneNoteJuraMarker.Utils;
 using OneNoteJuraMarker.ViewModels;
+using System.Diagnostics;
 
 
 namespace OneNoteJuraMarker.Views;
@@ -29,15 +30,23 @@ public sealed partial class MainPage : Page
 
             foreach (var section in notebook.Sections)
             {
-                var sectionNode = new TreeViewNode { Content = section.Name, IsExpanded = true };
-
-                foreach (var page in section.Pages)
+                if (section.Name == "Gelöschte Seiten")
                 {
-                    var pageNode = new TreeViewNode { Content = page.Name };
-                    sectionNode.Children.Add(pageNode);
+                    Debug.WriteLine($"Gelöschte Seiten von: {section.Name}");
+                    continue;
                 }
+                else
+                {
+                    var sectionNode = new TreeViewNode { Content = section.Name, IsExpanded = true };
 
-                notebookNode.Children.Add(sectionNode);
+                    foreach (var page in section.Pages)
+                    {
+                        var pageNode = new TreeViewNode { Content = page.Name };
+                        sectionNode.Children.Add(pageNode);
+                    }
+
+                    notebookNode.Children.Add(sectionNode);
+                }
             }
 
             NotebookTreeView.RootNodes.Add(notebookNode);

@@ -11,7 +11,10 @@
 
     <Grid>
         <ScrollViewer>
-            <TextBlock x:Name="PreviewTextBlock" Text="Lade..." TextWrapping="Wrap" Margin="10"/>
+            <RichTextBlock x:Name="PreviewRichTextBlock" 
+                       Margin="10"
+                       IsTextSelectionEnabled="True"
+                       TextWrapping="Wrap"/>
         </ScrollViewer>
     </Grid>
 </Window>
