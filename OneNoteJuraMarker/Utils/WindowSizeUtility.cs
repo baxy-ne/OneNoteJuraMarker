@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using OneNoteJuraMarker.Interfaces;
 using System.Runtime.InteropServices;
 using Windows.Graphics;
 

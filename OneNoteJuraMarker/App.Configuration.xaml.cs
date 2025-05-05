@@ -5,6 +5,7 @@ using OneNoteJuraMarker.OneNoteLogic;
 using OneNoteJuraMarker.Utils;
 using OneNoteJuraMarker.ViewModels;
 using OneNoteJuraMarker.Views;
+using OneNoteJuraMarker.Interfaces;
 
 namespace OneNoteJuraMarker
 {
@@ -22,7 +23,9 @@ namespace OneNoteJuraMarker
                 .AddSingleton<MainWindow>()
                 .AddSingleton<MainPage>()
                 .AddSingleton<MainViewModel>()
-                .AddSingleton<OneNoteProgram>()
+                .AddSingleton<IOneNoteProgram, OneNoteProgram>()
+                .AddSingleton<IDialogUtility, DialogUtility>()
+                .AddSingleton<IOneNoteParser, OneNoteParser>()
                 .BuildServiceProvider(true);
 
             return provider;

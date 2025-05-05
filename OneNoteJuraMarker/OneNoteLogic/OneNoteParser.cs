@@ -1,17 +1,22 @@
-﻿using OneNoteJuraMarker.Models;
+﻿using Microsoft.Office.Interop.OneNote;
+using OneNoteJuraMarker.Interfaces;
+using OneNoteJuraMarker.Models;
+using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace OneNoteJuraMarker.OneNoteLogic;
 
 
-public class OneNoteParser
+public class OneNoteParser : IOneNoteParser
 {
-    public static List<NotebookModel> LoadNotebooksFromXml(string xmlPath)
+    public List<NotebookModel> LoadNotebooksFromXml()
     {
+        var onenoteApp = new Application();
         XNamespace one = "http://schemas.microsoft.com/office/onenote/2013/onenote";
+        onenoteApp.GetHierarchy("", HierarchyScope.hsPages, out string notebookXml);
 
-        var doc = XDocument.Load(xmlPath);
+        var doc = XDocument.Parse(notebookXml);
         var notebooks = new List<NotebookModel>();
 
         foreach (var nb in doc.Descendants(one + "Notebook"))
@@ -33,10 +38,15 @@ public class OneNoteParser
 
                 foreach (var page in section.Descendants(one + "Page"))
                 {
+                    var pageId = (string)page.Attribute("ID");
+                    string pageContentXml = "";
+
+                    onenoteApp.GetPageContent(pageId, out pageContentXml, PageInfo.piAll, XMLSchema.xs2013);
                     var pageModel = new PageModel
                     {
                         Name = (string)page.Attribute("name"),
-                        DateTime = (string)page.Attribute("dateTime")
+                        DateTime = (string)page.Attribute("dateTime"),
+                        PageXML = pageContentXml
                     };
 
                     sectionModel.Pages.Add(pageModel);

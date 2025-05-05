@@ -1,36 +1,39 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using OneNoteJuraMarker.Interfaces;
+using OneNoteJuraMarker.Models;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace OneNoteJuraMarker.ViewModels;
 
-public partial class MainViewModel : ObservableObject
+public partial class MainViewModel(IConfiguration configuration, IOneNoteProgram oneNoteProgram, IOneNoteParser oneNoteParser) : ObservableObject
 {
-    [ObservableProperty]
-    private bool _isSelectAllChecked;
+    [ObservableProperty] private ObservableCollection<NotebookModel> _notebooks = new(oneNoteParser.LoadNotebooksFromXml());
+    [ObservableProperty] private NotebookModel _selectedNotebook;
 
-    [ObservableProperty]
-    private bool _viewCheckboxIsChecked;
+    [ObservableProperty] private bool _viewCheckboxIsChecked;
 
-    [ObservableProperty]
-    private bool _tableCheckboxIsChecked;
-
-    private readonly IConfiguration _config;
-
-    public string DefaultNotebook { get; set; }
-
-    public MainViewModel(IConfiguration configuration)
-    {
-        _config = configuration;
-        DefaultNotebook = _config["OneNoteJuraMarker:DefaultNotebook"];
-    }
+    [ObservableProperty] private bool _tableCheckboxIsChecked;
 
     [RelayCommand]
-    private void StartCompare()
+    private void LoadNoteBooks()
     {
+        foreach (var notebook in _notebooks)
+        {
+            foreach (var sec in notebook.Sections)
+            {
+                foreach (var page in sec.Pages)
+                {
+                Debug.WriteLine($"{notebook.Sections}");
+
+                }
+
+            }
+        }
     }
 
     [RelayCommand]

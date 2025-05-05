@@ -1,4 +1,5 @@
 ﻿using Microsoft.Office.Interop.OneNote;
+using OneNoteJuraMarker.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,8 +10,8 @@ using System.Xml.Linq;
 
 namespace OneNoteJuraMarker.OneNoteLogic;
 
-public class OneNoteProgram
-{ 
+public class OneNoteProgram : IOneNoteProgram
+{
     [STAThread]
     public void ProcessOneNotePages()
     {

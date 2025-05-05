@@ -1,5 +1,5 @@
 using Microsoft.UI.Xaml;
-using OneNoteJuraMarker.Utils;
+using OneNoteJuraMarker.Interfaces;
 using OneNoteJuraMarker.ViewModels;
 using OneNoteJuraMarker.Views;
 

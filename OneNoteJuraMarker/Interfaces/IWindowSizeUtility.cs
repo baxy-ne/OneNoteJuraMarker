@@ -1,6 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 
-namespace OneNoteJuraMarker.Utils;
+namespace OneNoteJuraMarker.Interfaces;
 
 public interface IWindowSizeUtility
 {
