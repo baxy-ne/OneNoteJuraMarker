@@ -17,8 +17,6 @@ public class OneNoteProgram : IOneNoteProgram
     private readonly List<string> _abbreviations = new() { "Abs.", "S.", "HS", "Nr.", "Var.", "Alt.", "  ", "lit.", "Gr.", "1.", "2.", "3." };
     private readonly List<string> _legalCodes = new() { "BGB", "GG", "VwVfG", "VwGO" };
     private readonly List<string> _romanNumerals = new() { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X" };
-
-    [STAThread]
     public void ProcessOneNotePages()
     {
         var onenoteApp = new Application();
@@ -121,7 +119,6 @@ public class OneNoteProgram : IOneNoteProgram
         doc.Save(sw, SaveOptions.DisableFormatting);
         string updatedXml = sw.ToString();
 
-        // Optional debug file
         File.WriteAllText("debug.xml", updatedXml);
 
         app.UpdatePageContent(updatedXml);

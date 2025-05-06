@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Documents;
 using OneNoteJuraMarker.Interfaces;
+using OneNoteJuraMarker.OneNoteLogic;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -12,6 +13,8 @@ namespace OneNoteJuraMarker.Views
         {
             InitializeComponent();
             LoadContentAsync(pageId, yourOneNoteHelper);
+            IOneNoteSaver oneNoteSaver = new OneNoteSaver();
+            oneNoteSaver.DoTheStuff(yourOneNoteHelper.GetPageContent(pageId));
         }
 
         private async void LoadContentAsync(string pageId, IYourOneNoteHelper yourOneNoteHelper)

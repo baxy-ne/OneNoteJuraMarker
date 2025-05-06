@@ -27,6 +27,7 @@ partial class App
             .AddSingleton<IDialogUtility, DialogUtility>()
             .AddSingleton<IOneNoteParser, OneNoteParser>()
             .AddSingleton<IYourOneNoteHelper, YourOneNoteHelper>()
+            .AddSingleton<IOneNoteSaver, OneNoteSaver>()
             .BuildServiceProvider(true);
 
         return provider;

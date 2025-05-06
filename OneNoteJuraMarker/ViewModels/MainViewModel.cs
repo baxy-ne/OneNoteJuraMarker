@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Configuration;
 using OneNoteJuraMarker.Interfaces;
 using OneNoteJuraMarker.Models;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -10,7 +11,7 @@ namespace OneNoteJuraMarker.ViewModels;
 
 public partial class MainViewModel(IConfiguration configuration, IOneNoteProgram oneNoteProgram, IOneNoteParser oneNoteParser) : ObservableObject
 {
-    [ObservableProperty] private ObservableCollection<NotebookModel> _notebooks = new(oneNoteParser.LoadNotebooksFromXml());
+    [ObservableProperty] private List<NotebookModel> _notebooks = new(oneNoteParser.LoadNotebooksFromXml());
 
     [ObservableProperty] private bool _viewCheckboxIsChecked;
 
@@ -19,14 +20,17 @@ public partial class MainViewModel(IConfiguration configuration, IOneNoteProgram
     [RelayCommand]
     private void LoadNoteBooks()
     {
+        
         foreach (var notebook in Notebooks)
         {
             foreach (var sec in notebook.Sections)
             {
                 foreach (var page in sec.Pages)
                 {
-                Debug.WriteLine($"{notebook.Sections}");
-
+                    if (page.PageXML.Contains("§"))
+                    {
+                        Debug.WriteLine($"{page.PageXML}");
+                    }
                 }
 
             }
